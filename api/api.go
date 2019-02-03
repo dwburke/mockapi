@@ -21,7 +21,7 @@ var server *http.Server
 func SetupRoutes(r *mux.Router) {
 	for route, info := range config.Config.Routes {
 		log.Info("Adding route: ", route)
-		if route == "GET" {
+		if info.Method == "GET" {
 			r.HandleFunc(route, MockGet).Methods(info.Method)
 		}
 	}

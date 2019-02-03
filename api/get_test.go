@@ -1,8 +1,7 @@
 package api_test
 
 import (
-	//"bytes"
-	//"encoding/json"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -71,10 +70,14 @@ func TestMockGetJson(t *testing.T) {
 	expect(t, w.Code, http.StatusOK, string(body))
 	expect(t, string(body), string("{\"thing-id\":667}"), string(body))
 
-	//var room types.Room
-	//err = json.Unmarshal(body, &room)
-	//expect(t, err, nil, "")
-	//expect(t, room.Vnum, 1265, "")
+	type JsonType struct {
+		Id int `json:"thing-id"`
+	}
+
+	var thing JsonType
+	err = json.Unmarshal(body, &thing)
+	expect(t, err, nil, "")
+	expect(t, thing.Id, 667, "")
 
 }
 

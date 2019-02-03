@@ -10,6 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+
+	"github.com/dwburke/mockapi/config"
 )
 
 var ShutdownCh chan bool
@@ -17,7 +19,11 @@ var ShutdownCh chan bool
 var server *http.Server
 
 func SetupRoutes(r *mux.Router) {
-	r.HandleFunc("/api/agent/{ip}", GetAgent).Methods("GET")
+	for route, info := range config.Config.Routes {
+		log.Info("Adding route: ", route)
+		r.HandleFunc(route, MockMethod).Methods(info.Method)
+	}
+
 }
 
 func init() {

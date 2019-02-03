@@ -7,6 +7,7 @@ func init() {
 }
 
 type route struct {
+	Method string `yaml:"method"`
 	Result string `yaml:"result"`
 }
 

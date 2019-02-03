@@ -1,32 +1,52 @@
 package api
 
 import (
+	"bytes"
 	"net/http"
+	"text/template"
 
 	helpers "github.com/dwburke/go-tools/gorillamuxhelpers"
 	"github.com/gorilla/mux"
-	//"github.com/spf13/cast"
+
+	"github.com/dwburke/mockapi/config"
 )
 
 func MockMethod(w http.ResponseWriter, r *http.Request) {
-	//params := mux.Vars(r)
+	params := mux.Vars(r)
 
-	//if !helpers.CheckRequiredVar(w, params, "ip") {
-	//return
-	//}
+	path_template, err := mux.CurrentRoute(r).GetPathTemplate()
+	if err != nil {
+		helpers.RespondWithError(w, 404, err.Error())
+		return
+	}
 
-	//agent := db.GetAgent(cast.ToString(params["ip"]))
+	info, ok := config.Config.Routes[path_template]
+	if !ok {
+		helpers.RespondWithError(w, 404, path_template+" not configured")
+		return
+	}
 
-	//if agent == nil {
-	//helpers.RespondWithError(w, 404, "agent does not exist")
-	//return
-	//}
-
-	if template, err := mux.CurrentRoute(r).GetPathTemplate(); err != nil {
+	t := template.New("result")
+	t2, err := t.Parse(info.Result)
+	if err != nil {
 		helpers.RespondWithError(w, 500, err.Error())
 		return
-	} else {
-		helpers.RespondWithJSON(w, 200, template)
 	}
-	//helpers.RespondWithJSON(w, 200, r.CurrentRoute().GetPathTemplate())
+
+	args := map[string]interface{}{
+		"Params": params,
+		"Route":  info,
+	}
+
+	var tpl bytes.Buffer
+
+	err = t2.Execute(&tpl, args)
+	if err != nil {
+		helpers.RespondWithError(w, 500, err.Error())
+		return
+	}
+
+	result := tpl.String()
+
+	helpers.RespondWithJSON(w, 200, result)
 }

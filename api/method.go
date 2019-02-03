@@ -49,7 +49,7 @@ func MockMethod(w http.ResponseWriter, r *http.Request) {
 
 	result := tpl.String()
 
-	log.Infof("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
+	log.Debugf("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
 
 	helpers.RespondWithJSON(w, 200, result)
 }

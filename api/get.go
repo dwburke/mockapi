@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"text/template"
 
@@ -50,6 +51,17 @@ func MockGet(w http.ResponseWriter, r *http.Request) {
 	result := tpl.String()
 
 	log.Debugf("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
+	log.Infof("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
 
-	helpers.RespondWithJSON(w, 200, result)
+	if info.ResultType == "application/json" {
+		var jsonObj interface{}
+		err := json.Unmarshal([]byte(result), &jsonObj)
+		if err != nil {
+			helpers.RespondWithError(w, 500, err.Error())
+			return
+		}
+		helpers.RespondWithJSON(w, 200, jsonObj)
+	} else {
+		helpers.RespondWithString(w, 200, result)
+	}
 }

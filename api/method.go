@@ -12,7 +12,7 @@ import (
 	"github.com/dwburke/mockapi/config"
 )
 
-func MockMethod(w http.ResponseWriter, r *http.Request) {
+func MockGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	path_template, err := mux.CurrentRoute(r).GetPathTemplate()

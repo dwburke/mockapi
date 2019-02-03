@@ -41,7 +41,30 @@ func setup() (r *mux.Router) {
 	return
 }
 
-func TestMockGet(t *testing.T) {
+func TestMockGetString(t *testing.T) {
+
+	r := setup()
+
+	req, _ := http.NewRequest("GET", "/get/str/d78a1e65-a2f4-43e5-aaf9-654ee11d68ae", nil)
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	r.ServeHTTP(w, req)
+
+	body, err := ioutil.ReadAll(w.Body)
+	expect(t, err, nil, "")
+
+	expect(t, w.Code, http.StatusOK, string(body))
+	expect(t, string(body), string("thing-id: d78a1e65-a2f4-43e5-aaf9-654ee11d68ae"), string(body))
+
+	//var room types.Room
+	//err = json.Unmarshal(body, &room)
+	//expect(t, err, nil, "")
+	//expect(t, room.Vnum, 1265, "")
+
+}
+
+func TestMockGetJson(t *testing.T) {
 
 	r := setup()
 

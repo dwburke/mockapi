@@ -9,9 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	//"github.com/addictmud/types"
 	"github.com/gorilla/mux"
-	//"github.com/spf13/viper"
 
 	"github.com/dwburke/mockapi/api"
 	"github.com/dwburke/mockapi/config"
@@ -35,7 +33,6 @@ func setup() (r *mux.Router) {
 		},
 	}
 
-	//r.HandleFunc("/get/thing/{id}", api.MockGet).Methods("GET")
 	api.SetupRoutes(r)
 
 	return
@@ -56,12 +53,6 @@ func TestMockGetString(t *testing.T) {
 
 	expect(t, w.Code, http.StatusOK, string(body))
 	expect(t, string(body), string("thing-id: d78a1e65-a2f4-43e5-aaf9-654ee11d68ae"), string(body))
-
-	//var room types.Room
-	//err = json.Unmarshal(body, &room)
-	//expect(t, err, nil, "")
-	//expect(t, room.Vnum, 1265, "")
-
 }
 
 func TestMockGetJson(t *testing.T) {

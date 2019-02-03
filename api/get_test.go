@@ -23,13 +23,20 @@ func setup() (r *mux.Router) {
 	config.Config = &config.ConfigType{
 		Routes: map[string]*config.Route{
 			"/get/thing/{id}": &config.Route{
-				Method: "GET",
-				Result: "{\"thing-id\":{{- .Params.id -}}}",
+				Method:     "GET",
+				Result:     "{\"thing-id\":{{- .Params.id -}}}",
+				ResultType: "application/json",
+			},
+			"/get/str/{uuid}": &config.Route{
+				Method:     "GET",
+				Result:     "thing-id: {{ .Params.uuid }}",
+				ResultType: "text/html",
 			},
 		},
 	}
 
-	r.HandleFunc("/get/thing/{id}", api.MockGet).Methods("GET")
+	//r.HandleFunc("/get/thing/{id}", api.MockGet).Methods("GET")
+	api.SetupRoutes(r)
 
 	return
 }

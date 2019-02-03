@@ -1,16 +1,16 @@
 package config
 
-var Config *config
+var Config *ConfigType
 
 func init() {
-	Config = &config{}
+	Config = &ConfigType{}
 }
 
-type route struct {
+type Route struct {
 	Method string `yaml:"method"`
 	Result string `yaml:"result"`
 }
 
-type config struct {
-	Routes map[string]*route `yaml:"routes"`
+type ConfigType struct {
+	Routes map[string]*Route `yaml:"routes"`
 }

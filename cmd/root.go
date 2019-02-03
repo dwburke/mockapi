@@ -6,7 +6,9 @@ import (
 
 	"github.com/dwburke/vipertools"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
+	"github.com/dwburke/mockapi/config"
 	"github.com/dwburke/mockapi/cron"
 	"github.com/dwburke/mockapi/logging"
 )
@@ -37,8 +39,15 @@ func Execute() {
 }
 
 func initConfig() {
+	fmt.Println("Reading: ", configDir)
 	if err := vipertools.ReadDir(configDir); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	err := viper.Unmarshal(config.Config)
+	if err != nil {
+		fmt.Printf("unable to decode into config struct, %v", err)
+	}
+
 }

@@ -51,7 +51,6 @@ func MockGet(w http.ResponseWriter, r *http.Request) {
 	result := tpl.String()
 
 	log.Debugf("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
-	log.Infof("path_template: %s; info.Result: %s; result: %s", path_template, info.Result, result)
 
 	if info.ResultType == "application/json" {
 		var jsonObj interface{}

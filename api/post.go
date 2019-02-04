@@ -18,18 +18,21 @@ func MockPost(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")
 
+	//var params = make(map[string]string)
 	params := mux.Vars(r)
 	var jsonObj = make(map[string]interface{})
 
 	if contentType == "application/json" {
-		err := json.NewDecoder(r.Body).Decode(&jsonObj)
-		if err != nil {
-			helpers.RespondWithError(w, 404, err.Error())
-			return
-		}
+		if r.Body != nil {
+			err := json.NewDecoder(r.Body).Decode(&jsonObj)
+			if err != nil {
+				helpers.RespondWithError(w, 404, err.Error())
+				return
+			}
 
-		for k, v := range jsonObj {
-			params[k] = cast.ToString(v)
+			for k, v := range jsonObj {
+				params[k] = cast.ToString(v)
+			}
 		}
 	}
 

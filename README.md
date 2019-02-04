@@ -8,7 +8,7 @@ routes:
   "/test2":
     method: "GET"
     result: "result2"
-    result_type: "application/json"
+    result_type: "text/html"
   "/get/{id}":
     method: "GET"
     result: "param id:{{.Params.id}}"

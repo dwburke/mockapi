@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -20,7 +21,7 @@ func mockPostSetup() (r *mux.Router) {
 		Routes: map[string]*config.Route{
 			"/post/thing/{id}": &config.Route{
 				Method:     "POST",
-				Result:     "{\"thing-id\":{{- .Params.id -}}}",
+				Result:     "{\"thing-id\":{{- .Params.id -}},\"data\":\"{{- .Params.data -}}\"}",
 				ResultType: "application/json",
 			},
 			"/post/str/{uuid}": &config.Route{
@@ -57,7 +58,11 @@ func TestMockPostJson(t *testing.T) {
 
 	r := mockPostSetup()
 
-	req, _ := http.NewRequest("POST", "/post/thing/668", nil)
+	jsonObj := map[string]string{"data": "foo data", "bar": "bar data"}
+	jsonStr, err := json.Marshal(jsonObj)
+	expect(t, err, nil, "")
+
+	req, _ := http.NewRequest("POST", "/post/thing/668", bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -67,10 +72,11 @@ func TestMockPostJson(t *testing.T) {
 	expect(t, err, nil, "")
 
 	expect(t, w.Code, http.StatusOK, string(body))
-	expect(t, string(body), string("{\"thing-id\":668}"), string(body))
+	expect(t, string(body), string("{\"data\":\"foo data\",\"thing-id\":668}"), string(body))
 
 	type JsonType struct {
-		Id int `json:"thing-id"`
+		Data string `json:"data"`
+		Id   int    `json:"thing-id"`
 	}
 
 	var thing JsonType

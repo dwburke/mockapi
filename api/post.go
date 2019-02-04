@@ -9,14 +9,29 @@ import (
 	helpers "github.com/dwburke/go-tools/gorillamuxhelpers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 
 	"github.com/dwburke/mockapi/config"
 )
 
 func MockPost(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
 
-	log.Infof("params: %#v", params)
+	contentType := r.Header.Get("Content-Type")
+
+	params := mux.Vars(r)
+	var jsonObj = make(map[string]interface{})
+
+	if contentType == "application/json" {
+		err := json.NewDecoder(r.Body).Decode(&jsonObj)
+		if err != nil {
+			helpers.RespondWithError(w, 404, err.Error())
+			return
+		}
+
+		for k, v := range jsonObj {
+			params[k] = cast.ToString(v)
+		}
+	}
 
 	path_template, err := mux.CurrentRoute(r).GetPathTemplate()
 	if err != nil {
